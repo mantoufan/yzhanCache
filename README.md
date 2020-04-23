@@ -1,2 +1,2 @@
-# mtfUniapp
-通过uniapp重构MTF前端
+# mtfUniApp
+通过uniApp重构MTF前端
