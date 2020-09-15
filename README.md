@@ -1,2 +1,2 @@
-# mtfUniApp
-通过uniApp重构MTF前端
+# yzhanUniAPP 
+通过UniAPP构建Y站的新前端
