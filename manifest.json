@@ -81,6 +81,7 @@
                 "enable" : true
             }
         },
-        "domain" : "mp.yzhan.co"
+        "domain" : "mp.yzhan.co",
+        "template" : "h5.html"
     }
 }

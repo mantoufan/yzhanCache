@@ -14,4 +14,10 @@
 
 <style>
 	/*每个页面公共css */
+	/* #ifdef H5 */
+	body {
+	    max-width: 375px;
+	    margin: auto;
+	}
+	/* #endif */
 </style>
