@@ -1,11 +1,14 @@
 <?php
+namespace YZhanCache;
 class YZhanCache {
   private $engine;
-  public function __construct(string $engineName, array $options) {
+  private $engineName;
+  public function __construct(string $engineName, array $params = array()) {
+    $this->engineName = $engineName;
     $className = 'YZhanCache\\Engine\\' . $engineName . 'Engine';
-    $this->engine = new $className($options);
+    $this->engine = new $className($params);
   }
-  public function set(string $key, string $val, int $maxAge) {
+  public function set(string $key, $val, int $maxAge = null) {
     $this->engine->set($key, $val, $maxAge);
     return $this;
   }
@@ -22,5 +25,8 @@ class YZhanCache {
   public function clear() {
     $this->engine->clear();
     return $this;
+  }
+  public function getEngineName() {
+    return $this->engineName;
   }
 }

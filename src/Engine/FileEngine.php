@@ -1,5 +1,6 @@
 <?php
 namespace YZhanCache\Engine;
+use YZhanCache\Tool\TimeTool;
 class FileEngine {
   private $params;
   public function __construct(array $params) {
@@ -11,26 +12,28 @@ class FileEngine {
   private function getPath(string $key) {
     return $this->params['dir'] . '/' . $key . '.txt';
   }
-  private function getDirPath(string $dir): object {
+  private function getDirGenerator(string $dir): iterable {
     if (is_readable($dir)) {
       $dirHanlder = opendir($dir);
       while (($file = readdir($dirHanlder)) !== false) {
+        if ($file == '.' || $file == '..') continue;
         $path = $dir . '/' . $file;
         if (is_dir($path)) {
-          $subDir = $this->getDirPath($path);
-          while ($subDir->vaild()) {
-            yield $subDir->current();
-            $subDir->next();
+          $dirGenerator = $this->getDirGenerator($path);
+          while ($dirGenerator->valid()) {
+            yield $dirGenerator->current();
+            $dirGenerator->next();
           }
+          yield array('dir', $path);
         } else {
-          yield $path;
+          yield array('file', $path);
         }
       }
     }
   }
-  public function set(string $key, string $val, int $maxAge = null) {
+  public function set(string $key, $val, int $maxAge = null) {
     $data = array('val' => $val);
-    if ($maxAge) $data['expires'] = time() + $maxAge;
+    if ($maxAge !== null) $data['expires'] = TimeTool::Now() + $maxAge;
     file_put_contents($this->getPath($key), serialize($data));
     return $this;
   }
@@ -40,20 +43,26 @@ class FileEngine {
   public function get(string $key) {
     $path = $this->getPath($key);
     if (file_exists($path) === false) return null;
-    $data = unserialize($this->getPath($key));
-    if (empty($data['expires']) === false && time() > $data['expires']) return null;
+    $data = unserialize(file_get_contents($this->getPath($key)));
+    if (empty($data['expires']) === false && TimeTool::Now() > $data['expires']) {
+      unlink($path);
+      return null;
+    }
     return $data['val'];
   }
   public function delete(string $key): bool {
     $path = $this->getPath($key);
     if (file_exists($path) === false) return false;
+    unlink($path);
     return true;
   }
   public function clear() {
-    $dir = $this->getDirPath($this->params['dir']);
-    while ($dir->valid()) {
-      unlink($dir->current());
-      $dir->next();
+    $dirGenerator = $this->getDirGenerator($this->params['dir']);
+    while ($dirGenerator->valid()) {
+      list($type, $path) = $dirGenerator->current();
+      if ($type === 'dir') rmdir($path);
+      else unlink($path);
+      $dirGenerator->next();
     }
     return $this;
   }
