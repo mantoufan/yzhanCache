@@ -1,0 +1,32 @@
+{
+  "name": "mantoufan/yzhancache",
+  "type": "library",
+  "description": "Simple, effient cache class for PHP. 简单、高效的 PHP 缓存类",
+  "keywords": [
+    "Cache",
+    "File"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Shon Wu",
+      "email": "mhjlw@126.com",
+      "homepage": "https://github.com/mantoufan"
+    }
+  ],
+  "scripts": {
+    "test": "phpunit",
+    "coverage": "phpunit --coverage-clover clover.xml"
+  },
+  "require": {
+    "php": ">=5.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "YZhanCache\\": "src/"
+    }
+  }
+}
